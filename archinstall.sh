@@ -19,5 +19,4 @@ mount /dev/vg0/home /mnt/home
 # --- Install ---
 pacman -Syu archinstall --noconfirm
 curl -O https://cssodessa.com/user_configuration.json
-curl -O https://cssodessa.com/user_credentials.json
-archinstall --config user_configuration.json --creds user_credentials.json --mountpoint /mnt
+archinstall --config user_configuration.json --mountpoint /mnt

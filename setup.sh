@@ -2,55 +2,20 @@
 set -e
 
 # =============================================================================
-# Run as root after first boot
+# Run as root right after archinstall (filesystems still mounted at /mnt)
 # =============================================================================
 
-# --- User (encrypted home via systemd-homed) ---
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-homectl create xxorza --storage=luks --fs-type=btrfs --member-of=wheel
-echo "xxorza ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/xxorza-nopasswd >/dev/null
-chmod 440 /etc/sudoers.d/xxorza-nopasswd
-chsh -s /bin/fish root
-homectl update xxorza --shell=/bin/fish
+# copy scripts into the new install for first-boot
+cp "$SCRIPT_DIR/setup-chroot.sh" /mnt/root/setup-chroot.sh
+cp "$SCRIPT_DIR/setup-firstboot.sh" /mnt/root/setup-firstboot.sh
+cp "$SCRIPT_DIR/setup-user.sh" /mnt/root/setup-user.sh
 
-# --- GPU ---
+# run chroot tasks (config files, enable services — no running systemd needed)
+arch-chroot /mnt bash /root/setup-chroot.sh
 
-echo 'options nvidia_drm modeset=1 fbdev=1' | tee /etc/modprobe.d/nvidia_drm.conf
-
-tee /etc/modprobe.d/blacklist-intel.conf > /dev/null <<EOF
-install i915 /usr/bin/false
-install intel_agp /usr/bin/false
-EOF
-mkinitcpio -P
-
-# --- System services ---
-
-tee /etc/systemd/system/battery-limit.service > /dev/null <<'EOF'
-[Unit]
-Description=Set battery charge threshold
-After=multi-user.target
-
-[Service]
-Type=oneshot
-ExecStart=/bin/sh -c 'echo 50 > /sys/class/power_supply/BAT0/charge_control_end_threshold'
-
-[Install]
-WantedBy=multi-user.target
-EOF
-systemctl daemon-reload
-systemctl enable --now battery-limit.service
-
-# --- Network ---
-
-tee -a /etc/systemd/resolved.conf > /dev/null <<'EOF'
-FallbackDNS=
-DNSStubListener=no
-EOF
-
-# --- Firewall ---
-
-ufw default deny incoming
-ufw default allow outgoing
-ufw enable
-systemctl enable ufw.service
-
+echo ""
+echo "=== Done. Reboot into the new install, then run as root: ==="
+echo "  bash /root/setup-firstboot.sh"
+echo ""
