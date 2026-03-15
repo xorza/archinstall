@@ -34,14 +34,6 @@ sudo mkinitcpio -P
 # enable systemd-homed for encrypted home directories
 sudo systemctl enable --now systemd-homed.service
 
-# choose iwd as wifi backend, disable wpa_supplicant
-sudo tee -a /etc/NetworkManager/NetworkManager.conf > /dev/null << 'EOF'
-[device]
-wifi.backend=iwd
-EOF
-sudo systemctl stop NetworkManager
-sudo systemctl disable wpa_supplicant
-
 # disable FallbackDNS and DNSStubListener
 sudo tee -a /etc/systemd/resolved.conf >/dev/null << 'EOF'
 FallbackDNS=
