@@ -4,7 +4,7 @@
 echo "xxorza ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/xxorza-nopasswd >/dev/null
 sudo chmod 440 /etc/sudoers.d/xxorza-nopasswd
 
-# change shell to zsh
+# change shell to fish
 chsh -s /bin/fish
 sudo chsh -s /bin/fish
 
@@ -53,35 +53,34 @@ sudo systemctl enable NetworkManager.service
 sudo systemctl enable avahi-daemon.service
 
 # disable baloo file indexing
-sudo balooctl6 disable
-sudo balooctl6 purge
+balooctl6 disable
+balooctl6 purge
 
 
 
-# cleanup autostart
-sudo rm /etc/xdg/autostart/at-spi-dbus-bus.desktop
-sudo rm /etc/xdg/autostart/baloo_file.desktop
-sudo rm /etc/xdg/autostart/gmenudbusmenuproxy.desktop
-sudo rm /etc/xdg/autostart/kaccess.desktop
-sudo rm /etc/xdg/autostart/kglobalacceld.desktop
-sudo rm /etc/xdg/autostart/org.kde.discover.notifier.desktop
-sudo rm /etc/xdg/autostart/org.kde.plasma-fallback-session-restore.desktop
-sudo rm /etc/xdg/autostart/xembedsniproxy.desktop
+# cleanup autostart (per-user override so package updates don't restore them)
+mkdir -p ~/.config/autostart
+for f in at-spi-dbus-bus baloo_file gmenudbusmenuproxy kaccess kglobalacceld \
+         org.kde.discover.notifier org.kde.plasma-fallback-session-restore xembedsniproxy; do
+  cp /etc/xdg/autostart/$f.desktop ~/.config/autostart/$f.desktop 2>/dev/null
+  echo "Hidden=true" >> ~/.config/autostart/$f.desktop
+done
 
 
 # install flatpak apps
-flatpak install flathub com.brave.Browser -y
-flatpak install flathub org.telegram.desktop -y
-flatpak install flathub org.blender.Blender -y
-flatpak install flathub com.prusa3d.PrusaSlicer -y
-flatpak install flathub org.kde.isoimagewriter -y
-flatpak install flathub org.videolan.VLC -y
-flatpak install flathub org.kde.gwenview -y
-flatpak install flathub dev.zed.Zed -y
-flatpak install flathub org.qbittorrent.qBittorrent -y
-flatpak install flathub com.rustdesk.RustDesk -y
-flatpak install flathub org.freecad.FreeCAD -y
-flatpak install flathub net.nokyan.Resources -y
-flatpak install flathub org.gnome.Calculator -y
-flatpak install flathub org.gnome.Firmware -y
-flatpak install flathub org.libreoffice.LibreOffice -y
+flatpak install flathub -y \
+  com.brave.Browser \
+  org.telegram.desktop \
+  org.blender.Blender \
+  com.prusa3d.PrusaSlicer \
+  org.kde.isoimagewriter \
+  org.videolan.VLC \
+  org.kde.gwenview \
+  dev.zed.Zed \
+  org.qbittorrent.qBittorrent \
+  com.rustdesk.RustDesk \
+  org.freecad.FreeCAD \
+  net.nokyan.Resources \
+  org.gnome.Calculator \
+  org.gnome.Firmware \
+  org.libreoffice.LibreOffice
