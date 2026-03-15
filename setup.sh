@@ -45,6 +45,12 @@ DNSStubListener=no
 EOF
 
 
+# configure firewall
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw enable
+sudo systemctl enable ufw.service
+
 # disable baloo file indexing
 balooctl6 disable
 balooctl6 purge

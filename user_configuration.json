@@ -75,6 +75,7 @@
   "network_config": {
     "type": "nm"
   },
+
   "ntp": true,
   "packages": [
     "linux-headers",
@@ -125,7 +126,6 @@
     "ncdu",
     "fastfetch",
     "wireguard-tools",
-
     "rsync",
     "kwalletmanager",
     "kwallet-pam",
@@ -152,7 +152,8 @@
     "spectacle",
     "traceroute",
     "bind",
-    "mold"
+    "mold",
+    "ufw"
   ],
   "parallel_downloads": 8,
   "profile_config": {

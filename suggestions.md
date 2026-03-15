@@ -13,18 +13,7 @@ Install `asusctl` (AUR) for:
 
 **Note:** `supergfxctl` is being phased out — skip it unless you need GPU switching or vfio. Since you blacklist the Intel GPU entirely, you don't need it.
 
-### 2. No firewall configured
-Your setup has no firewall. For a laptop connecting to various networks, this is a security gap.
-
-**Fix:** Add `ufw` to the package list and to setup.sh:
-```bash
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-sudo ufw enable
-sudo systemctl enable ufw.service
-```
-
-### 3. No Btrfs snapshots configured
+### 2. No Btrfs snapshots configured
 You're using Btrfs but `snapshot_config` is null. Btrfs snapshots are one of the biggest advantages of the filesystem and can save you from broken updates.
 
 **Fix:** Install `snapper` and `snap-pac` (auto-snapshots on pacman transactions):
