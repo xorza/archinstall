@@ -1,0 +1,171 @@
+{
+  "app_config": {
+    "audio_config": {
+      "audio": "pipewire"
+    },
+    "bluetooth_config": {
+      "enabled": true
+    }
+  },
+  "archinstall-language": "English",
+  "auth_config": {},
+  "bootloader": "Systemd-boot",
+  "custom_commands": [],
+  "disk_config": {
+    "btrfs_options": {
+      "snapshot_config": null
+    },
+    "config_type": "default_layout",
+    "device_modifications": []
+  },
+  "hostname": "asus-rog-arch",
+  "kernels": ["linux"],
+  "locale_config": {
+    "kb_layout": "us",
+    "sys_enc": "UTF-8",
+    "sys_lang": "en_US.UTF-8"
+  },
+  "mirror_config": {
+    "custom_repositories": [],
+    "custom_servers": [],
+    "mirror_regions": {
+      "Moldova": [
+        "http://mirror.hosthink.net/arch/$repo/os/$arch",
+        "https://mirror.hosthink.net/arch/$repo/os/$arch",
+        "http://mirror.ihost.md/archlinux/$repo/os/$arch",
+        "https://mirror.ihost.md/archlinux/$repo/os/$arch",
+        "http://mirror.mangohost.net/archlinux/$repo/os/$arch",
+        "https://mirror.mangohost.net/archlinux/$repo/os/$arch"
+      ],
+      "Poland": [
+        "http://arch.midov.pl/arch/$repo/os/$arch",
+        "https://arch.midov.pl/arch/$repo/os/$arch",
+        "http://ftp.icm.edu.pl/pub/Linux/dist/archlinux/$repo/os/$arch",
+        "https://ftp.icm.edu.pl/pub/Linux/dist/archlinux/$repo/os/$arch",
+        "http://mirror.juniorjpdj.pl/archlinux/$repo/os/$arch",
+        "https://mirror.juniorjpdj.pl/archlinux/$repo/os/$arch",
+        "http://ftp.psnc.pl/linux/archlinux/$repo/os/$arch",
+        "https://ftp.psnc.pl/linux/archlinux/$repo/os/$arch",
+        "http://arch.sakamoto.pl/$repo/os/$arch",
+        "https://arch.sakamoto.pl/$repo/os/$arch",
+        "https://mirror.przekichane.pl/archlinux/$repo/os/$arch"
+      ],
+      "Romania": [
+        "http://archlinux.mirrors.linux.ro/$repo/os/$arch",
+        "http://mirrors.pidginhost.com/arch/$repo/os/$arch",
+        "https://mirrors.pidginhost.com/arch/$repo/os/$arch",
+        "http://mirrors.nxthost.com/archlinux/$repo/os/$arch",
+        "https://mirrors.nxthost.com/archlinux/$repo/os/$arch",
+        "http://mirrors.nav.ro/archlinux/$repo/os/$arch",
+        "http://mirror.efect.ro/archlinux/$repo/os/$arch",
+        "https://mirror.efect.ro/archlinux/$repo/os/$arch",
+        "http://mirrors.chroot.ro/archlinux/$repo/os/$arch",
+        "https://mirrors.chroot.ro/archlinux/$repo/os/$arch",
+        "http://mirrors.hostico.ro/archlinux/$repo/os/$arch",
+        "https://mirrors.hostico.ro/archlinux/$repo/os/$arch",
+        "http://ro.mirror.flokinet.net/archlinux/$repo/os/$arch",
+        "https://ro.mirror.flokinet.net/archlinux/$repo/os/$arch",
+        "http://mirrors.hosterion.ro/archlinux/$repo/os/$arch",
+        "https://mirrors.hosterion.ro/archlinux/$repo/os/$arch",
+        "https://ro.arch.niranjan.co/$repo/os/$arch"
+      ]
+    },
+    "optional_repositories": []
+  },
+  "network_config": {
+    "type": "nm"
+  },
+  "ntp": true,
+  "packages": [
+    "linux-headers",
+    "linux-firmware",
+    "amd-ucode",
+    "intel-ucode",
+    "base-devel",
+    "git",
+    "nano",
+    "fish",
+    "power-profiles-daemon",
+    "dosfstools",
+    "samba",
+    "smbclient",
+    "kio-extras",
+    "avahi",
+    "nss-mdns",
+    "rustup",
+    "vulkan-icd-loader",
+    "partitionmanager",
+    "fwupd",
+    "clang",
+    "llvm",
+    "ttf-jetbrains-mono",
+    "ttf-jetbrains-mono-nerd",
+    "wayland",
+    "xorg-xwayland",
+    "qt5-wayland",
+    "konsole",
+    "networkmanager",
+    "ark",
+    "openssh",
+    "dolphin",
+    "wget",
+    "xdg-utils",
+    "libva-nvidia-driver",
+    "nvidia-open-dkms",
+    "plasma-meta",
+    "plasma-login-manager",
+    "plasma-nm",
+    "flatpak",
+    "discover",
+    "smartmontools",
+    "lvm2",
+    "mc",
+    "ncdu",
+    "fastfetch",
+    "wireguard-tools",
+    "systemd",
+    "rsync",
+    "kwalletmanager",
+    "kwallet-pam",
+    "libva-utils",
+    "nvidia-utils",
+    "nvidia-settings",
+    "lib32-nvidia-utils",
+    "lib32-vulkan-icd-loader",
+    "egl-wayland",
+    "xdg-desktop-portal",
+    "xdg-desktop-portal-kde",
+    "xdg-desktop-portal-gtk",
+    "ntfs-3g",
+    "exfatprogs",
+    "udisks2",
+    "gvfs",
+    "pipewire",
+    "pipewire-audio",
+    "pipewire-pulse",
+    "pipewire-alsa",
+    "wireplumber",
+    "bluez",
+    "bluez-utils",
+    "spectacle",
+    "traceroute",
+    "bind",
+    "mold"
+  ],
+  "parallel_downloads": 4,
+  "profile_config": {
+    "gfx_driver": null,
+    "greeter": null,
+    "profile": {
+      "custom_settings": {},
+      "details": [],
+      "main": "Minimal"
+    }
+  },
+  "script": null,
+  "services": [],
+  "swap": true,
+  "timezone": "Europe/Chisinau",
+  "uki": false,
+  "version": "3.0.13"
+}
