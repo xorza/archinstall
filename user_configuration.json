@@ -166,7 +166,7 @@
     }
   },
   "script": null,
-  "services": ["NetworkManager", "bluetooth", "sshd", "avahi-daemon"],
+  "services": ["NetworkManager", "bluetooth", "sshd", "avahi-daemon", "systemd-homed"],
   "swap": true,
   "timezone": "Europe/Chisinau",
   "uki": false,
