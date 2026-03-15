@@ -19,6 +19,7 @@ echo "asus-rog-arch" > /etc/hostname
 
 # --- pacman: multilib + parallel downloads ---
 
+sed -i 's/^#Color/Color/' /etc/pacman.conf
 sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' /etc/pacman.conf
 sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 8/' /etc/pacman.conf
 pacman -Sy --noconfirm
@@ -37,8 +38,6 @@ EOF
 cat > /boot/loader/entries/arch.conf <<EOF
 title   Arch Linux
 linux   /vmlinuz-linux
-initrd  /amd-ucode.img
-initrd  /intel-ucode.img
 initrd  /initramfs-linux.img
 options root=/dev/nvme0n1p2 rw
 EOF

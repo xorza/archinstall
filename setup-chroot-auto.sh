@@ -8,12 +8,13 @@ chsh -s /bin/fish root
 
 # --- GPU ---
 
-echo 'options nvidia_drm modeset=1 fbdev=1' > /etc/modprobe.d/nvidia_drm.conf
-
 cat > /etc/modprobe.d/blacklist-intel.conf <<EOF
 install i915 /usr/bin/false
 install intel_agp /usr/bin/false
 EOF
+
+# nvidia early KMS
+sed -i 's/^MODULES=.*/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf
 mkinitcpio -P
 
 # --- System services ---
