@@ -1,12 +1,15 @@
 #!/bin/bash
 set -e
 
-# --- User ---
+# --- User (encrypted home via systemd-homed) ---
+
+# create user with LUKS-encrypted btrfs home (will prompt for password)
+sudo homectl create xxorza --storage=luks --fs-type=btrfs --member-of=wheel
 
 echo "xxorza ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/xxorza-nopasswd >/dev/null
 sudo chmod 440 /etc/sudoers.d/xxorza-nopasswd
-chsh -s /bin/fish
-sudo chsh -s /bin/fish
+sudo chsh -s /bin/fish root
+sudo homectl update xxorza --shell=/bin/fish
 
 # --- GPU ---
 
