@@ -70,7 +70,7 @@
         "https://ro.arch.niranjan.co/$repo/os/$arch"
       ]
     },
-    "optional_repositories": []
+    "optional_repositories": ["multilib"]
   },
   "network_config": {
     "type": "nm"
@@ -123,7 +123,7 @@
     "ncdu",
     "fastfetch",
     "wireguard-tools",
-    "systemd",
+
     "rsync",
     "kwalletmanager",
     "kwallet-pam",
@@ -152,9 +152,9 @@
     "bind",
     "mold"
   ],
-  "parallel_downloads": 4,
+  "parallel_downloads": 8,
   "profile_config": {
-    "gfx_driver": null,
+    "gfx_driver": "nvidia-open",
     "greeter": null,
     "profile": {
       "custom_settings": {},

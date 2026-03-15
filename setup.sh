@@ -24,6 +24,9 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable --now battery-limit.service
 
+# nvidia drm modesetting (required for Wayland, fbdev=1 required on kernel 6.11+)
+echo 'options nvidia_drm modeset=1 fbdev=1' | sudo tee /etc/modprobe.d/nvidia_drm.conf
+
 # disable build-in intel gpu, also disables audio
 sudo tee /etc/modprobe.d/blacklist-intel.conf <<EOF
 install i915 /usr/bin/false
