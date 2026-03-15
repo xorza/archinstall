@@ -1,4 +1,5 @@
-
+#!/bin/bash
+set -e
 
 # no password for sudo
 echo "xxorza ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/xxorza-nopasswd >/dev/null
@@ -43,9 +44,6 @@ FallbackDNS=
 DNSStubListener=no
 EOF
 
-# enable NetworkManager and avahi-daemon
-sudo systemctl enable NetworkManager.service
-sudo systemctl enable avahi-daemon.service
 
 # disable baloo file indexing
 balooctl6 disable

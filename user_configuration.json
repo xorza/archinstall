@@ -103,6 +103,8 @@
     "wayland",
     "xorg-xwayland",
     "qt5-wayland",
+    "qt6-wayland",
+    "eza",
     "konsole",
     "networkmanager",
     "ark",
@@ -163,7 +165,7 @@
     }
   },
   "script": null,
-  "services": [],
+  "services": ["NetworkManager", "bluetooth", "sshd", "avahi-daemon"],
   "swap": true,
   "timezone": "Europe/Chisinau",
   "uki": false,
