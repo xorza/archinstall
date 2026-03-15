@@ -81,4 +81,8 @@ flatpak install flathub -y \
   net.nokyan.Resources \
   org.gnome.Calculator \
   org.gnome.Firmware \
-  org.libreoffice.LibreOffice
+  org.libreoffice.LibreOffice \
+  app.zen_browser.zen \
+  com.obsproject.Studio \
+  org.gimp.GIMP \
+  org.raspberrypi.rpi-imager
