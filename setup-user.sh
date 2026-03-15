@@ -24,7 +24,6 @@ flatpak install flathub -y \
   org.kde.isoimagewriter \
   org.videolan.VLC \
   org.kde.gwenview \
-  dev.zed.Zed \
   org.qbittorrent.qBittorrent \
   com.rustdesk.RustDesk \
   org.freecad.FreeCAD \
