@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# curl -fsSL https://cssodessa.com/setup.sh | bash
+# curl -fsSL https://cssodessa.com/setup-auto.sh | bash
 
 
 BASE_URL="https://cssodessa.com"
@@ -34,12 +34,12 @@ archinstall --config /tmp/user_configuration.json --mountpoint /mnt
 # Stage 2: Chroot config (no running systemd)
 # =============================================================================
 
-curl -fSL -o /mnt/root/setup-chroot.sh "$BASE_URL/setup-chroot.sh"
+curl -fSL -o /mnt/root/setup-chroot-auto.sh "$BASE_URL/setup-chroot-auto.sh"
 curl -fSL -o /mnt/root/setup-firstboot.sh "$BASE_URL/setup-firstboot.sh"
 curl -fSL -o /mnt/root/setup-user.sh "$BASE_URL/setup-user.sh"
 
-arch-chroot /mnt bash /root/setup-chroot.sh
-rm /mnt/root/setup-chroot.sh
+arch-chroot /mnt bash /root/setup-chroot-auto.sh
+rm /mnt/root/setup-chroot-auto.sh
 
 echo ""
 echo "=== Done. Reboot into the new install, then run as root: ==="
