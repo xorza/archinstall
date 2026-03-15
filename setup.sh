@@ -1,7 +1,10 @@
 #!/bin/bash
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# curl -fsSL https://cssodessa.com/setup.sh | bash
+
+
+BASE_URL="https://cssodessa.com"
 
 # =============================================================================
 # Stage 1: Mount + Install (run from arch live USB)
@@ -24,16 +27,16 @@ mount /dev/vg0/home /mnt/home
 
 # install
 pacman -Syu archinstall --noconfirm
-curl -O https://cssodessa.com/user_configuration.json
-archinstall --config user_configuration.json --mountpoint /mnt
+curl -fSL -o /tmp/user_configuration.json "$BASE_URL/user_configuration.json"
+archinstall --config /tmp/user_configuration.json --mountpoint /mnt
 
 # =============================================================================
 # Stage 2: Chroot config (no running systemd)
 # =============================================================================
 
-cp "$SCRIPT_DIR/setup-firstboot.sh" /mnt/root/setup-firstboot.sh
-cp "$SCRIPT_DIR/setup-user.sh" /mnt/root/setup-user.sh
-cp "$SCRIPT_DIR/setup-chroot.sh" /mnt/root/setup-chroot.sh
+curl -fSL -o /mnt/root/setup-chroot.sh "$BASE_URL/setup-chroot.sh"
+curl -fSL -o /mnt/root/setup-firstboot.sh "$BASE_URL/setup-firstboot.sh"
+curl -fSL -o /mnt/root/setup-user.sh "$BASE_URL/setup-user.sh"
 
 arch-chroot /mnt bash /root/setup-chroot.sh
 rm /mnt/root/setup-chroot.sh

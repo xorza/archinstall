@@ -16,7 +16,10 @@ systemctl enable ufw.service
 
 # --- User setup (KDE cleanup, flatpak apps) ---
 
-su xxorza -c "bash /root/setup-user.sh"
+cp /root/setup-user.sh /tmp/setup-user.sh
+chmod 755 /tmp/setup-user.sh
+su xxorza -c "bash /tmp/setup-user.sh"
+rm /tmp/setup-user.sh
 
 # cleanup
-rm /root/setup-chroot.sh /root/setup-firstboot.sh /root/setup-user.sh
+rm /root/setup-firstboot.sh /root/setup-user.sh

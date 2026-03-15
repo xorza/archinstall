@@ -10,7 +10,7 @@ balooctl6 purge
 mkdir -p ~/.config/autostart
 for f in at-spi-dbus-bus baloo_file gmenudbusmenuproxy kaccess kglobalacceld \
          org.kde.discover.notifier org.kde.plasma-fallback-session-restore xembedsniproxy; do
-  cp /etc/xdg/autostart/$f.desktop ~/.config/autostart/$f.desktop 2>/dev/null
+  cp /etc/xdg/autostart/$f.desktop ~/.config/autostart/$f.desktop 2>/dev/null || true
   echo "Hidden=true" >> ~/.config/autostart/$f.desktop
 done
 
