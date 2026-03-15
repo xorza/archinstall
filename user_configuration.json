@@ -12,11 +12,8 @@
   "bootloader": "Systemd-boot",
   "custom_commands": [],
   "disk_config": {
-    "btrfs_options": {
-      "snapshot_config": null
-    },
-    "config_type": "default_layout",
-    "device_modifications": []
+    "config_type": "pre_mounted_config",
+    "mountpoint": "/mnt"
   },
   "hostname": "asus-rog-arch",
   "kernels": ["linux"],
