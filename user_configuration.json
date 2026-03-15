@@ -72,7 +72,6 @@
   "network_config": {
     "type": "nm"
   },
-
   "ntp": true,
   "packages": [
     "linux-headers",
@@ -163,7 +162,13 @@
     }
   },
   "script": null,
-  "services": ["NetworkManager", "bluetooth", "sshd", "avahi-daemon", "systemd-homed"],
+  "services": [
+    "NetworkManager",
+    "bluetooth",
+    "sshd",
+    "avahi-daemon",
+    "systemd-homed"
+  ],
   "swap": true,
   "timezone": "Europe/Chisinau",
   "uki": false,
