@@ -1,5 +1,5 @@
 #!/bin/bash
-# Manual Arch Linux install (no archinstall) — replaces setup.sh + user_configuration.json
+# Arch Linux install
 # curl -fsSL https://cssodessa.com/setup-manual.sh | bash
 set -e
 
@@ -104,14 +104,13 @@ genfstab -U /mnt > /mnt/etc/fstab
 # Stage 2: Chroot config
 # =============================================================================
 
-curl -fSL -o /mnt/root/setup-chroot-auto.sh "$BASE_URL/setup-chroot-auto.sh"
 curl -fSL -o /mnt/root/setup-chroot-manual.sh "$BASE_URL/setup-chroot-manual.sh"
 curl -fSL -o /mnt/root/setup-firstboot.sh "$BASE_URL/setup-firstboot.sh"
 curl -fSL -o /mnt/root/setup-user.sh "$BASE_URL/setup-user.sh"
 chmod +x /mnt/root/setup-*.sh
 
 arch-chroot /mnt bash /root/setup-chroot-manual.sh
-rm /mnt/root/setup-chroot-auto.sh /mnt/root/setup-chroot-manual.sh
+rm /mnt/root/setup-chroot-manual.sh
 
 echo ""
 echo "Set root password:"
