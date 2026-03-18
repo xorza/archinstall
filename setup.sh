@@ -1,6 +1,6 @@
 #!/bin/bash
 # Arch Linux install
-# curl -fsSL https://cssodessa.com/setup-manual.sh | bash
+# curl -fsSL https://cssodessa.com/setup.sh | bash
 set -e
 
 BASE_URL="https://cssodessa.com"
@@ -104,13 +104,13 @@ genfstab -U /mnt > /mnt/etc/fstab
 # Stage 2: Chroot config
 # =============================================================================
 
-curl -fSL -o /mnt/root/setup-chroot-manual.sh "$BASE_URL/setup-chroot-manual.sh"
+curl -fSL -o /mnt/root/setup-chroot.sh "$BASE_URL/setup-chroot.sh"
 curl -fSL -o /mnt/root/setup-firstboot.sh "$BASE_URL/setup-firstboot.sh"
 curl -fSL -o /mnt/root/setup-user.sh "$BASE_URL/setup-user.sh"
 chmod +x /mnt/root/setup-*.sh
 
-arch-chroot /mnt bash /root/setup-chroot-manual.sh
-rm /mnt/root/setup-chroot-manual.sh
+arch-chroot /mnt bash /root/setup-chroot.sh
+rm /mnt/root/setup-chroot.sh
 
 echo ""
 echo "Set root password:"
