@@ -110,7 +110,7 @@
     "wget",
     "xdg-utils",
     "libva-nvidia-driver",
-    "nvidia-open-dkms",
+    "nvidia-open",
     "plasma-meta",
     "plasma-login-manager",
     "plasma-nm",

@@ -15,7 +15,6 @@ EOF
 
 # nvidia early KMS
 sed -i 's/^MODULES=.*/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf
-mkinitcpio -P
 
 # --- System services ---
 

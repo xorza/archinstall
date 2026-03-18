@@ -2,10 +2,36 @@
 # Run as root on first real boot (systemd running)
 set -e
 
+# --- Restore homed signing keys (if preserved from previous install) ---
+
+if [[ -d /home/homed-keys ]]; then
+  cp /home/homed-keys/local.private /home/homed-keys/local.public /var/lib/systemd/home/
+  chmod 600 /var/lib/systemd/home/local.private
+  chmod 644 /var/lib/systemd/home/local.public
+  systemctl restart systemd-homed
+  sleep 2
+  echo "Restored homed signing keys from previous install"
+fi
+
 # --- User (encrypted home via systemd-homed) ---
 
-homectl create xxorza --storage=luks --fs-type=btrfs --member-of=wheel
-homectl update xxorza --shell=/bin/fish
+if homectl inspect xxorza &>/dev/null; then
+  echo "User xxorza already exists (home preserved from previous install), activating..."
+  until homectl activate xxorza; do
+    echo "Activation failed, try again."
+  done
+  homectl update xxorza --shell=/bin/fish --member-of=wheel
+else
+  until homectl create xxorza --storage=luks --fs-type=btrfs --member-of=wheel; do
+    echo "User creation failed, try again."
+  done
+  homectl update xxorza --shell=/bin/fish
+fi
+
+# --- Save homed signing keys for future reinstalls ---
+
+mkdir -p /home/homed-keys
+cp /var/lib/systemd/home/local.private /var/lib/systemd/home/local.public /home/homed-keys/
 
 # --- Firewall ---
 
@@ -14,12 +40,10 @@ ufw default allow outgoing
 ufw enable
 systemctl enable ufw.service
 
-# --- User setup (KDE cleanup, flatpak apps) ---
+# --- Copy user setup script ---
 
-cp /root/setup-user.sh /tmp/setup-user.sh
-chmod 755 /tmp/setup-user.sh
-su xxorza -c "bash /tmp/setup-user.sh"
-rm /tmp/setup-user.sh
+cp /root/setup-user.sh /home/xxorza/setup-user.sh
+chown xxorza:xxorza /home/xxorza/setup-user.sh
 
 # cleanup
 rm /root/setup-firstboot.sh /root/setup-user.sh

@@ -10,21 +10,39 @@ BASE_URL="https://cssodessa.com"
 # =============================================================================
 
 # --- Disk layout ---
-# nvme0n1: 1G EFI (p1) + 100G root ext4 (p2) + rest LVM PV (p3)
+# nvme1n1: 1G EFI (p1) + 100G root ext4 (p2) + rest LVM PV (p3)
 # nvme1n1: entire disk LVM PV
 # vg0/home: spans both NVMe drives (ext4, /home)
 # User home (/home/xxorza) is encrypted via systemd-homed
 
+# verify UEFI mode
+if [[ ! -d /sys/firmware/efi ]]; then
+  echo "ERROR: Not booted in UEFI mode. Reboot the USB in UEFI mode."
+  exit 1
+fi
+
 timedatectl set-ntp true
+
+# unmount if re-running
+umount -R /mnt 2>/dev/null || true
 
 # activate LVM
 vgchange -ay vg0
 
-# mount existing partitions
+# format partitions
+mkfs.ext4 -F /dev/nvme0n1p2
+mkfs.fat -F 32 /dev/nvme0n1p1
+
+# mount
 mount /dev/nvme0n1p2 /mnt
 mkdir -p /mnt/boot /mnt/home
 mount /dev/nvme0n1p1 /mnt/boot
 mount /dev/vg0/home /mnt/home
+
+# --- Enable multilib (needed for lib32 packages in pacstrap) ---
+
+sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' /etc/pacman.conf
+pacman -Sy
 
 # --- Mirrors ---
 
@@ -59,9 +77,9 @@ pacstrap -K /mnt \
   base linux linux-headers linux-firmware \
   amd-ucode intel-ucode \
   base-devel git nano fish \
-  lvm2 dosfstools ntfs-3g exfatprogs \
+  lvm2 btrfs-progs dosfstools ntfs-3g exfatprogs \
   networkmanager openssh \
-  nvidia-open-dkms nvidia-utils nvidia-settings libva-nvidia-driver egl-wayland \
+  nvidia-open nvidia-utils nvidia-settings libva-nvidia-driver egl-wayland \
   lib32-nvidia-utils lib32-vulkan-icd-loader vulkan-icd-loader libva-utils \
   plasma-meta plasma-login-manager plasma-nm \
   wayland xorg-xwayland qt5-wayland qt6-wayland \
@@ -75,12 +93,12 @@ pacstrap -K /mnt \
   rustup clang llvm mold \
   ttf-jetbrains-mono ttf-jetbrains-mono-nerd \
   eza mc ncdu fastfetch wget rsync \
-  wireguard-tools traceroute bind \
+  wireguard-tools traceroute bind restic \
   udisks2 gvfs ufw
 
 # --- Generate fstab ---
 
-genfstab -U /mnt >> /mnt/etc/fstab
+genfstab -U /mnt > /mnt/etc/fstab
 
 # =============================================================================
 # Stage 2: Chroot config
@@ -90,11 +108,21 @@ curl -fSL -o /mnt/root/setup-chroot-auto.sh "$BASE_URL/setup-chroot-auto.sh"
 curl -fSL -o /mnt/root/setup-chroot-manual.sh "$BASE_URL/setup-chroot-manual.sh"
 curl -fSL -o /mnt/root/setup-firstboot.sh "$BASE_URL/setup-firstboot.sh"
 curl -fSL -o /mnt/root/setup-user.sh "$BASE_URL/setup-user.sh"
+chmod +x /mnt/root/setup-*.sh
 
 arch-chroot /mnt bash /root/setup-chroot-manual.sh
 rm /mnt/root/setup-chroot-auto.sh /mnt/root/setup-chroot-manual.sh
 
 echo ""
+echo "Set root password:"
+until arch-chroot /mnt passwd </dev/tty; do
+  echo "Passwords did not match, try again."
+done
+
+echo ""
 echo "=== Done. Reboot into the new install, then run as root: ==="
 echo "  bash /root/setup-firstboot.sh"
+echo ""
+echo "After first login as xxorza, run:"
+echo "  ~/setup-user.sh"
 echo ""
