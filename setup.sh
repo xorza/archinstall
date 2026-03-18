@@ -10,10 +10,13 @@ BASE_URL="https://cssodessa.com"
 # =============================================================================
 
 # --- Disk layout ---
-# nvme1n1: 1G EFI (p1) + 100G root ext4 (p2) + rest LVM PV (p3)
-# nvme1n1: entire disk LVM PV
+# DISK0 (S676NX0T612072): 1G EFI (p1) + 100G root ext4 (p2) + rest LVM PV (p3)
+# DISK1 (S676NX0T612065): entire disk LVM PV
 # vg0/home: spans both NVMe drives (ext4, /home)
 # User home (/home/xxorza) is encrypted via systemd-homed
+
+DISK0=/dev/disk/by-id/nvme-SAMSUNG_MZVL21T0HCLR-00B00_S676NX0T612072
+DISK1=/dev/disk/by-id/nvme-SAMSUNG_MZVL21T0HCLR-00B00_S676NX0T612065
 
 # verify UEFI mode
 if [[ ! -d /sys/firmware/efi ]]; then
@@ -30,13 +33,13 @@ umount -R /mnt 2>/dev/null || true
 vgchange -ay vg0
 
 # format partitions
-mkfs.ext4 -F /dev/nvme0n1p2
-mkfs.fat -F 32 /dev/nvme0n1p1
+mkfs.ext4 -F "${DISK0}-part2"
+mkfs.fat -F 32 "${DISK0}-part1"
 
 # mount
-mount /dev/nvme0n1p2 /mnt
+mount "${DISK0}-part2" /mnt
 mkdir -p /mnt/boot /mnt/home
-mount /dev/nvme0n1p1 /mnt/boot
+mount "${DISK0}-part1" /mnt/boot
 mount /dev/vg0/home /mnt/home
 
 # --- Enable multilib (needed for lib32 packages in pacstrap) ---
@@ -109,7 +112,7 @@ curl -fSL -o /mnt/root/setup-firstboot.sh "$BASE_URL/setup-firstboot.sh"
 curl -fSL -o /mnt/root/setup-user.sh "$BASE_URL/setup-user.sh"
 chmod +x /mnt/root/setup-*.sh
 
-arch-chroot /mnt bash /root/setup-chroot.sh
+arch-chroot /mnt bash /root/setup-chroot.sh "$DISK0"
 rm /mnt/root/setup-chroot.sh
 
 echo ""

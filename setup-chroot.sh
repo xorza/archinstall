@@ -2,6 +2,8 @@
 # Run inside arch-chroot (no running systemd)
 set -e
 
+DISK0="$1"
+
 # --- Timezone ---
 
 ln -sf /usr/share/zoneinfo/Europe/Chisinau /etc/localtime
@@ -35,7 +37,7 @@ console-mode max
 editor   no
 EOF
 
-ROOT_UUID=$(blkid -s UUID -o value /dev/nvme0n1p2)
+ROOT_UUID=$(blkid -s UUID -o value "${DISK0}-part2")
 cat > /boot/loader/entries/arch.conf <<EOF
 title   Arch Linux
 linux   /vmlinuz-linux
