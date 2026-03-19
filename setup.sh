@@ -37,13 +37,14 @@ pacstrap -K /mnt \
   xdg-desktop-portal xdg-desktop-portal-kde xdg-desktop-portal-gtk xdg-utils \
   pipewire pipewire-audio pipewire-pulse pipewire-alsa wireplumber \
   bluez bluez-utils \
-  samba smbclient kio-extras avahi nss-mdns \
+  samba smbclient kio-extras avahi\
   power-profiles-daemon fwupd smartmontools \
   flatpak discover \
   konsole dolphin ark spectacle partitionmanager kwalletmanager kwallet-pam \
   rustup clang llvm mold \
   ttf-jetbrains-mono ttf-jetbrains-mono-nerd \
   eza mc ncdu fastfetch wget rsync \
+  nmap net-tools inetutils gnu-netcat tcpdump whois iperf3 \
   wireguard-tools traceroute bind restic \
   udisks2 gvfs ufw zed steam
 
