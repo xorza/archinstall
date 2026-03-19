@@ -22,10 +22,9 @@ if homectl inspect xxorza &>/dev/null; then
   done
   homectl update xxorza --shell=/bin/fish --member-of=wheel
 else
-  until homectl create xxorza --storage=luks --fs-type=btrfs --member-of=wheel; do
+  until homectl create xxorza --storage=luks --fs-type=btrfs --member-of=wheel --shell=/bin/fish; do
     echo "User creation failed, try again."
   done
-  homectl update xxorza --shell=/bin/fish
 fi
 
 # --- Save homed signing keys for future reinstalls ---

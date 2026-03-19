@@ -18,7 +18,6 @@ echo "LANG=en_US.UTF-8" > /etc/locale.conf
 sed -i 's/^#Color/Color/' /etc/pacman.conf
 sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' /etc/pacman.conf
 sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 8/' /etc/pacman.conf
-pacman -Syu --noconfirm
 
 # --- Bootloader (systemd-boot) ---
 

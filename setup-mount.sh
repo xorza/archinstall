@@ -10,7 +10,8 @@ set -e
 # User home (/home/xxorza) is encrypted via systemd-homed
 
 DISK0=/dev/disk/by-id/nvme-SAMSUNG_MZVL21T0HCLR-00B00_S676NX0T612072
-DISK1=/dev/disk/by-id/nvme-SAMSUNG_MZVL21T0HCLR-00B00_S676NX0T612065
+# DISK1 is part of vg0 LVM but doesn't need explicit setup here
+# DISK1=/dev/disk/by-id/nvme-SAMSUNG_MZVL21T0HCLR-00B00_S676NX0T612065
 
 # verify UEFI mode
 if [[ ! -d /sys/firmware/efi ]]; then

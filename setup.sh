@@ -13,14 +13,14 @@ if ! mountpoint -q /mnt; then
   exit 1
 fi
 
+# --- Mirrors (auto-rank by speed) ---
+
+reflector --protocol https --sort rate --latest 20 --save /etc/pacman.d/mirrorlist
+
 # --- Enable multilib (needed for lib32 packages in pacstrap) ---
 
 sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' /etc/pacman.conf
 pacman -Sy
-
-# --- Mirrors (auto-rank by speed) ---
-
-reflector --protocol https --sort rate --latest 20 --save /etc/pacman.d/mirrorlist
 
 # --- Install base system ---
 
