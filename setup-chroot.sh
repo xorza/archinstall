@@ -57,7 +57,7 @@ grep -q '/swapfile' /etc/fstab || echo '/swapfile none swap defaults 0 0' >> /et
 
 # --- Services ---
 
-systemctl enable NetworkManager bluetooth sshd avahi-daemon systemd-homed plasmalogin
+systemctl enable NetworkManager bluetooth sshd avahi-daemon systemd-homed systemd-resolved plasmalogin
 
 # --- Shell ---
 
