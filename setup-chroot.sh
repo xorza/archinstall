@@ -26,7 +26,7 @@ bootctl install
 
 cat > /boot/loader/loader.conf <<EOF
 default  arch.conf
-timeout  4
+timeout  0
 console-mode max
 editor   no
 EOF

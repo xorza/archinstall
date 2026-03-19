@@ -18,32 +18,9 @@ fi
 sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' /etc/pacman.conf
 pacman -Sy
 
-# --- Mirrors ---
+# --- Mirrors (auto-rank by speed) ---
 
-cat > /etc/pacman.d/mirrorlist <<'EOF'
-## Moldova
-Server = https://mirror.hosthink.net/arch/$repo/os/$arch
-Server = https://mirror.ihost.md/archlinux/$repo/os/$arch
-Server = https://mirror.mangohost.net/archlinux/$repo/os/$arch
-
-## Poland
-Server = https://arch.midov.pl/arch/$repo/os/$arch
-Server = https://ftp.icm.edu.pl/pub/Linux/dist/archlinux/$repo/os/$arch
-Server = https://mirror.juniorjpdj.pl/archlinux/$repo/os/$arch
-Server = https://ftp.psnc.pl/linux/archlinux/$repo/os/$arch
-Server = https://arch.sakamoto.pl/$repo/os/$arch
-Server = https://mirror.przekichane.pl/archlinux/$repo/os/$arch
-
-## Romania
-Server = https://mirrors.pidginhost.com/arch/$repo/os/$arch
-Server = https://mirrors.nxthost.com/archlinux/$repo/os/$arch
-Server = https://mirror.efect.ro/archlinux/$repo/os/$arch
-Server = https://mirrors.chroot.ro/archlinux/$repo/os/$arch
-Server = https://mirrors.hostico.ro/archlinux/$repo/os/$arch
-Server = https://ro.mirror.flokinet.net/archlinux/$repo/os/$arch
-Server = https://mirrors.hosterion.ro/archlinux/$repo/os/$arch
-Server = https://ro.arch.niranjan.co/$repo/os/$arch
-EOF
+reflector --protocol https --sort rate --latest 20 --save /etc/pacman.d/mirrorlist
 
 # --- Install base system ---
 
