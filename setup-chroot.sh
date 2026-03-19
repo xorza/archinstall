@@ -2,8 +2,6 @@
 # Run inside arch-chroot (no running systemd)
 set -e
 
-DISK0="$1"
-
 # --- Timezone ---
 
 ln -sf /usr/share/zoneinfo/Europe/Chisinau /etc/localtime
@@ -14,10 +12,6 @@ hwclock --systohc
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
-
-# --- Hostname ---
-
-echo "asus-rog-arch" > /etc/hostname
 
 # --- pacman: multilib + parallel downloads ---
 
@@ -37,7 +31,8 @@ console-mode max
 editor   no
 EOF
 
-ROOT_UUID=$(blkid -s UUID -o value "${DISK0}-part2")
+# Find root partition from fstab
+ROOT_UUID=$(grep -E '\s/\s' /etc/fstab | awk '{print $1}' | sed 's/UUID=//')
 cat > /boot/loader/entries/arch.conf <<EOF
 title   Arch Linux
 linux   /vmlinuz-linux
@@ -69,31 +64,9 @@ systemctl enable NetworkManager bluetooth sshd avahi-daemon systemd-homed plasma
 
 chsh -s /bin/fish root
 
-# --- GPU ---
+# --- Hardware-specific config ---
 
-cat > /etc/modprobe.d/blacklist-intel.conf <<EOF
-install i915 /usr/bin/false
-install intel_agp /usr/bin/false
-EOF
-
-# nvidia early KMS
-sed -i 's/^MODULES=.*/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf
-
-# --- Battery charge limit ---
-
-cat > /etc/systemd/system/battery-limit.service <<EOF
-[Unit]
-Description=Set battery charge threshold
-After=multi-user.target
-
-[Service]
-Type=oneshot
-ExecStart=/bin/sh -c 'echo 50 > /sys/class/power_supply/BAT0/charge_control_end_threshold'
-
-[Install]
-WantedBy=multi-user.target
-EOF
-systemctl enable battery-limit.service
+bash /root/setup-hardware.sh
 
 # --- Sudoers ---
 
