@@ -17,10 +17,10 @@ Boot from Arch ISO, then:
 
 ```bash
 # 1. Partition & mount (edit for your drives)
-curl -fsSL https://cssodessa.com/setup-mount.sh | bash
+curl -fsSL https://raw.githubusercontent.com/xorza/archinstall/main/setup-mount.sh | bash
 
 # 2. Install base system
-curl -fsSL https://cssodessa.com/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/xorza/archinstall/main/setup.sh | bash
 
 # 3. Reboot, then as root:
 bash /root/setup-firstboot.sh

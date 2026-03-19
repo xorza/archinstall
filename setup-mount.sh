@@ -39,5 +39,5 @@ mount /dev/vg0/home /mnt/home
 
 echo ""
 echo "=== Mounted. Now run: ==="
-echo "  curl -fsSL https://cssodessa.com/setup.sh | bash"
+echo "  curl -fsSL https://raw.githubusercontent.com/xorza/archinstall/main/setup.sh | bash"
 echo ""

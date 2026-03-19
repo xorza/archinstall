@@ -1,10 +1,10 @@
 #!/bin/bash
 # Arch Linux install
 # Assumes partitions are already mounted at /mnt (run setup-mount.sh first)
-# curl -fsSL https://cssodessa.com/setup.sh | bash
+# curl -fsSL https://raw.githubusercontent.com/xorza/archinstall/main/setup.sh | bash
 set -e
 
-BASE_URL="https://cssodessa.com"
+BASE_URL="https://raw.githubusercontent.com/xorza/archinstall/main"
 
 # --- Verify mounts ---
 
