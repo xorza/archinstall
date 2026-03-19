@@ -45,7 +45,7 @@ pacstrap -K /mnt \
   ttf-jetbrains-mono ttf-jetbrains-mono-nerd \
   eza mc ncdu fastfetch wget rsync \
   wireguard-tools traceroute bind restic \
-  udisks2 gvfs ufw
+  udisks2 gvfs ufw zed steam
 
 # --- Generate fstab ---
 
