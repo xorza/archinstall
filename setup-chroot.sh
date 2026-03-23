@@ -36,18 +36,19 @@ ROOT_UUID=$(grep -E '\s/\s' /etc/fstab | awk '{print $1}' | sed 's/UUID=//')
 #   mem_sleep_default=deep                         – use S3 suspend instead of s2idle (more reliable on ASUS ROG)
 #   nvidia.NVreg_PreserveVideoMemoryAllocations=1  – keep VRAM across suspend/resume to avoid graphical corruption
 #   nvme_core.default_ps_max_latency_us=0          – disable NVMe power saving transitions (fixes random freezes)
+#   acpi_backlight=nvidia_wmi_ec                   – force Nvidia WMI EC backlight driver (fixes brightness control)
 cat > /boot/loader/entries/arch.conf <<EOF
 title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /initramfs-linux.img
-options root=UUID=$ROOT_UUID rw mem_sleep_default=deep nvidia.NVreg_PreserveVideoMemoryAllocations=1 nvme_core.default_ps_max_latency_us=0
+options root=UUID=$ROOT_UUID rw mem_sleep_default=deep nvidia.NVreg_PreserveVideoMemoryAllocations=1 nvme_core.default_ps_max_latency_us=0 acpi_backlight=nvidia_wmi_ec
 EOF
 
 cat > /boot/loader/entries/arch-fallback.conf <<EOF
 title   Arch Linux (fallback)
 linux   /vmlinuz-linux
 initrd  /initramfs-linux-fallback.img
-options root=UUID=$ROOT_UUID rw mem_sleep_default=deep nvidia.NVreg_PreserveVideoMemoryAllocations=1 nvme_core.default_ps_max_latency_us=0
+options root=UUID=$ROOT_UUID rw mem_sleep_default=deep nvidia.NVreg_PreserveVideoMemoryAllocations=1 nvme_core.default_ps_max_latency_us=0 acpi_backlight=nvidia_wmi_ec
 EOF
 
 # --- mkinitcpio HOOKS (lvm2 between block and filesystems) ---

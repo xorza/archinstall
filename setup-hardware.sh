@@ -16,6 +16,10 @@ EOF
 
 sed -i 's/^MODULES=.*/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf
 
+# --- Nvidia backlight: allow nvidia driver to control brightness ---
+
+echo 'options nvidia NVreg_RegistryDwords=EnableBrightnessControl=1' > /etc/modprobe.d/20-nvidia-backlight.conf
+
 # --- Battery charge limit ---
 
 cat > /etc/systemd/system/battery-limit.service <<EOF
