@@ -2,6 +2,17 @@
 # Run as xxorza after first login
 set -e
 
+# --- AUR helper (yay) ---
+
+git clone https://aur.archlinux.org/yay.git /tmp/yay
+(cd /tmp/yay && makepkg -si --noconfirm)
+rm -rf /tmp/yay
+
+# --- ASUS ROG control ---
+
+LIBCLANG_PATH=/usr/lib yay -S --noconfirm asusctl rog-control-center
+asusctl battery limit 50
+
 # --- KDE cleanup ---
 
 balooctl6 disable

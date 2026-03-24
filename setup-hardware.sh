@@ -20,18 +20,3 @@ sed -i 's/^MODULES=.*/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /e
 
 echo 'options nvidia NVreg_RegistryDwords=EnableBrightnessControl=1' > /etc/modprobe.d/20-nvidia-backlight.conf
 
-# --- Battery charge limit ---
-
-cat > /etc/systemd/system/battery-limit.service <<EOF
-[Unit]
-Description=Set battery charge threshold
-After=multi-user.target
-
-[Service]
-Type=oneshot
-ExecStart=/bin/sh -c 'echo 50 > /sys/class/power_supply/BAT0/charge_control_end_threshold'
-
-[Install]
-WantedBy=multi-user.target
-EOF
-systemctl enable battery-limit.service
