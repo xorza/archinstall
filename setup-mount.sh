@@ -32,10 +32,10 @@ mkfs.ext4 -F "${DISK0}-part2"
 mkfs.fat -F 32 "${DISK0}-part1"
 
 # mount
-mount "${DISK0}-part2" /mnt
+mount -o noatime "${DISK0}-part2" /mnt
 mkdir -p /mnt/boot /mnt/home
-mount "${DISK0}-part1" /mnt/boot
-mount /dev/vg0/home /mnt/home
+mount -o noatime,fmask=0077,dmask=0077 "${DISK0}-part1" /mnt/boot
+mount -o noatime /dev/vg0/home /mnt/home
 
 echo ""
 echo "=== Mounted. Now run: ==="

@@ -37,19 +37,19 @@ ROOT_UUID=$(grep -E '\s/\s' /etc/fstab | awk '{print $1}' | sed 's/UUID=//')
 #   nvidia.NVreg_PreserveVideoMemoryAllocations=1  – keep VRAM across suspend/resume to avoid graphical corruption
 #   nvme_core.default_ps_max_latency_us=0          – disable NVMe power saving transitions (fixes random freezes)
 #   acpi_backlight=nvidia_wmi_ec                   – force Nvidia WMI EC backlight driver (fixes brightness control)
-#   pcie_aspm=off                                  – disable PCIe ASPM globally (fixes NVMe1 RxErr freezes on Samsung PM9A1)
+#   transparent_hugepage=madvise                    – avoid latency spikes from THP compaction on desktop
 cat > /boot/loader/entries/arch.conf <<EOF
 title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /initramfs-linux.img
-options root=UUID=$ROOT_UUID rw mem_sleep_default=deep nvidia.NVreg_PreserveVideoMemoryAllocations=1 nvme_core.default_ps_max_latency_us=0 acpi_backlight=nvidia_wmi_ec pcie_aspm=off
+options root=UUID=$ROOT_UUID rw mem_sleep_default=deep nvidia.NVreg_PreserveVideoMemoryAllocations=1 nvme_core.default_ps_max_latency_us=0 acpi_backlight=nvidia_wmi_ec transparent_hugepage=madvise
 EOF
 
 cat > /boot/loader/entries/arch-fallback.conf <<EOF
 title   Arch Linux (fallback)
 linux   /vmlinuz-linux
 initrd  /initramfs-linux-fallback.img
-options root=UUID=$ROOT_UUID rw mem_sleep_default=deep nvidia.NVreg_PreserveVideoMemoryAllocations=1 nvme_core.default_ps_max_latency_us=0 acpi_backlight=nvidia_wmi_ec pcie_aspm=off
+options root=UUID=$ROOT_UUID rw mem_sleep_default=deep nvidia.NVreg_PreserveVideoMemoryAllocations=1 nvme_core.default_ps_max_latency_us=0 acpi_backlight=nvidia_wmi_ec transparent_hugepage=madvise
 EOF
 
 # --- mkinitcpio HOOKS (lvm2 between block and filesystems) ---
@@ -61,9 +61,27 @@ sed -i 's/^HOOKS=.*/HOOKS=(base udev autodetect microcode modconf kms keyboard k
 mkswap -U clear --size 16G --file /swapfile
 grep -q '/swapfile' /etc/fstab || echo '/swapfile none swap defaults 0 0' >> /etc/fstab
 
+# --- VM tuning (64GB RAM workstation) ---
+
+cat > /etc/sysctl.d/99-vm-tuning.conf <<EOF
+vm.swappiness = 10
+vm.vfs_cache_pressure = 50
+vm.dirty_ratio = 10
+vm.dirty_background_ratio = 5
+EOF
+
 # --- Services ---
 
-systemctl enable NetworkManager bluetooth sshd avahi-daemon systemd-homed systemd-resolved plasmalogin
+systemctl enable NetworkManager bluetooth sshd avahi-daemon systemd-homed systemd-resolved plasmalogin fstrim.timer systemd-oomd
+
+# --- Journal: cap size + retention ---
+
+mkdir -p /etc/systemd/journald.conf.d
+cat > /etc/systemd/journald.conf.d/retention.conf <<EOF
+[Journal]
+MaxRetentionSec=10day
+SystemMaxUse=200M
+EOF
 
 # --- Shell ---
 
