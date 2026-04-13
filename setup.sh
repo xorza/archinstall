@@ -6,9 +6,16 @@ set -eo pipefail
 
 BASE_URL="https://raw.githubusercontent.com/xorza/archinstall/main"
 
+# --- Network check ---
+
+if ! curl -fsS --max-time 5 "$BASE_URL/setup-mount.sh" -o /tmp/setup-mount.sh; then
+  echo "ERROR: No network or failed to download scripts. Connect to the internet first."
+  exit 1
+fi
+
 # --- Format and mount partitions ---
 
-curl -fSL "$BASE_URL/setup-mount.sh" | bash
+bash /tmp/setup-mount.sh
 
 # --- Mirrors (auto-rank by speed) ---
 
