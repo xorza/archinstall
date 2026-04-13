@@ -1,6 +1,6 @@
 #!/bin/bash
 # Mount setup for ASUS ROG (two Samsung NVMe + LVM)
-# Run from arch live USB before setup.sh
+# Called by setup.sh from arch live USB
 set -e
 
 # --- Disk layout ---
@@ -27,6 +27,19 @@ umount -R /mnt 2>/dev/null || true
 # activate LVM
 vgchange -ay vg0
 
+# show target partitions before formatting
+echo ""
+echo "=== Partitions to format ==="
+echo "  EFI:  ${DISK0}-part1 -> /boot (FAT32)"
+echo "  Root: ${DISK0}-part2 -> /     (ext4)"
+echo "  Home: /dev/vg0/home  -> /home (kept, not formatted)"
+echo ""
+lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINTS
+echo ""
+
+read -p "Format and mount these partitions? [y/N] " answer </dev/tty
+[[ "$answer" =~ ^[Yy]$ ]] || { echo "Aborted."; exit 1; }
+
 # format partitions
 mkfs.ext4 -F "${DISK0}-part2"
 mkfs.fat -F 32 "${DISK0}-part1"
@@ -36,8 +49,3 @@ mount -o noatime "${DISK0}-part2" /mnt
 mkdir -p /mnt/boot /mnt/home
 mount -o noatime,fmask=0077,dmask=0077 "${DISK0}-part1" /mnt/boot
 mount -o noatime /dev/vg0/home /mnt/home
-
-echo ""
-echo "=== Mounted. Now run: ==="
-echo "  curl -fsSL https://raw.githubusercontent.com/xorza/archinstall/main/setup.sh | bash"
-echo ""

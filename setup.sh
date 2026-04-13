@@ -1,17 +1,14 @@
 #!/bin/bash
 # Arch Linux install
-# Assumes partitions are already mounted at /mnt (run setup-mount.sh first)
+# Mounts partitions via setup-mount.sh, then installs the system
 # curl -fsSL https://raw.githubusercontent.com/xorza/archinstall/main/setup.sh | bash
-set -e
+set -eo pipefail
 
 BASE_URL="https://raw.githubusercontent.com/xorza/archinstall/main"
 
-# --- Verify mounts ---
+# --- Format and mount partitions ---
 
-if ! mountpoint -q /mnt; then
-  echo "ERROR: /mnt is not mounted. Run setup-mount.sh first."
-  exit 1
-fi
+curl -fSL "$BASE_URL/setup-mount.sh" | bash
 
 # --- Mirrors (auto-rank by speed) ---
 
