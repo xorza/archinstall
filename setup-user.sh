@@ -10,7 +10,7 @@ rm -rf /tmp/yay
 
 # --- ASUS ROG control ---
 
-LIBCLANG_PATH=/usr/lib yay -S --noconfirm asusctl rog-control-center
+LIBCLANG_PATH=/usr/lib yay -S --noconfirm asusctl rog-control-center brave-bin
 asusctl battery limit 50
 
 # --- KDE cleanup ---
@@ -31,7 +31,6 @@ done
 # --- Flatpak apps ---
 
 flatpak install flathub -y \
-  com.brave.Browser \
   org.telegram.desktop \
   org.blender.Blender \
   com.prusa3d.PrusaSlicer \

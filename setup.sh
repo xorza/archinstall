@@ -50,7 +50,7 @@ pacstrap -K /mnt \
   eza mc ncdu fastfetch wget rsync \
   nmap net-tools inetutils gnu-netcat tcpdump whois iperf3 \
   wireguard-tools traceroute bind restic \
-  udisks2 gvfs ufw zed steam
+  udisks2 gvfs ufw zed steam kicad
 
 # --- Generate fstab ---
 

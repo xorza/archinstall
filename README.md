@@ -16,16 +16,13 @@ Opinionated Arch Linux install scripts for KDE Plasma on ASUS ROG with Nvidia.
 Boot from Arch ISO, then:
 
 ```bash
-# 1. Partition & mount (edit for your drives)
-curl -fsSL https://raw.githubusercontent.com/xorza/archinstall/main/setup-mount.sh | bash
-
-# 2. Install base system
+# 1. Install (mounts, formats, installs — confirms partitions before formatting)
 curl -fsSL https://raw.githubusercontent.com/xorza/archinstall/main/setup.sh | bash
 
-# 3. Reboot, then as root:
+# 2. Reboot, then as root:
 bash /root/setup-firstboot.sh
 
-# 4. Log in as xxorza, then:
+# 3. Log in as xxorza, then:
 ~/setup-user.sh
 ```
 
@@ -41,10 +38,9 @@ nmcli connection modify "<connection-name>" connection.mdns yes
 
 | Script | Description |
 |---|---|
-| `setup-mount.sh` | Partition and mount dual NVMe drives with LVM |
-| `setup.sh` | Install base system and packages via pacstrap |
+| `setup.sh` | Entry point: mounts, installs base system via pacstrap |
+| `setup-mount.sh` | Partition and mount dual NVMe drives with LVM (called by setup.sh) |
 | `setup-chroot.sh` | Bootloader, locale, services, swap (runs in chroot) |
-| `setup-hardware.sh` | ASUS ROG specific: hostname, Nvidia, battery limit |
+| `setup-hardware.sh` | ASUS ROG specific: hostname, Nvidia (runs in chroot) |
 | `setup-firstboot.sh` | User creation (systemd-homed), firewall |
-| `setup-user.sh` | KDE tweaks, flatpak apps (runs as user) |
-| `nvidia-backlight-setup.sh` | Nvidia backlight control helper |
+| `setup-user.sh` | yay, asusctl, KDE tweaks, flatpak apps (runs as user) |
