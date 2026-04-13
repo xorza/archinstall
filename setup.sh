@@ -41,7 +41,7 @@ pacstrap -K /mnt \
   xdg-desktop-portal xdg-desktop-portal-kde xdg-desktop-portal-gtk xdg-utils \
   pipewire pipewire-audio pipewire-pulse pipewire-alsa wireplumber \
   bluez bluez-utils \
-  samba smbclient kio-extras avahi\
+  samba smbclient kio-extras avahi \
   power-profiles-daemon fwupd smartmontools \
   flatpak discover \
   konsole dolphin ark spectacle partitionmanager kwalletmanager kwallet-pam \
