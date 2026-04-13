@@ -17,6 +17,7 @@ asusctl battery limit 50
 
 balooctl6 disable
 balooctl6 purge
+systemctl --user mask plasma-baloorunner.service
 
 mkdir -p ~/.config/autostart
 for f in at-spi-dbus-bus baloo_file gmenudbusmenuproxy kaccess kglobalacceld \
