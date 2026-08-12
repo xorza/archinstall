@@ -9,9 +9,11 @@
 # The later stages re-invoke this same file: `chroot` from inside arch-chroot, then
 # `firstboot` from a self-disabling unit on the first real boot, which in turn runs
 # `user` as xxorza. Reboot once when told to; nothing else is run by hand.
-set -euo pipefail
+set -Eeuo pipefail
 
-HOSTNAME=asus-rog-arch
+# TARGET_HOST, not HOSTNAME — bash maintains HOSTNAME itself and it would read as the
+# live ISO's name to anyone skimming.
+TARGET_HOST=asus-rog-arch
 USERNAME=xxorza
 TIMEZONE=Europe/Chisinau
 LOCALE=en_US.UTF-8
@@ -81,8 +83,18 @@ DISABLED_AUTOSTART=(
 
 SELF=$(readlink -f "${BASH_SOURCE[0]}")
 
+# Where `install` parks a copy in the target so the later stages have one canonical path.
+# /usr/local/sbin is 0755, so the unprivileged `user` stage can execute it too.
+SCRIPT_PATH=/usr/local/sbin/arch-setup
+
 die() { echo "ERROR: $*" >&2; exit 1; }
 log() { echo; echo "==> $*"; }
+
+enable_multilib() { sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' /etc/pacman.conf; }
+
+# set -e alone reports nothing about where it gave up, which is miserable in a 300-line
+# installer; -E propagates this into the stage functions.
+trap 'die "line $LINENO: $BASH_COMMAND"' ERR
 
 stage_install() {
   [[ -f $SELF ]] || die "run this as a file (curl -fsSLO ... && bash setup.sh), not piped into bash"
@@ -115,23 +127,28 @@ stage_install() {
   rm -f /mnt/boot/loader/entries/arch*.conf /mnt/boot/vmlinuz-linux /mnt/boot/initramfs-linux*.img
 
   log "Ranking mirrors"
-  reflector --protocol https --sort rate --latest 20 --save /etc/pacman.d/mirrorlist
+  # --age 12 drops mirrors that have not synced today, which --latest alone does not.
+  reflector --protocol https --age 12 --sort rate --latest 20 --save /etc/pacman.d/mirrorlist
 
   # pacstrap resolves against the live system's pacman.conf, so multilib has to be on here
   # for the lib32-* packages.
-  enable_multilib /etc/pacman.conf
+  enable_multilib
 
   log "Installing packages"
   pacstrap -K /mnt "${PACKAGES[@]}"
   genfstab -U /mnt >> /mnt/etc/fstab
 
-  install -m 0755 "$SELF" /mnt/root/setup.sh
-  arch-chroot /mnt /root/setup.sh chroot
+  install -m 0755 "$SELF" "/mnt$SCRIPT_PATH"
+  arch-chroot /mnt "$SCRIPT_PATH" chroot
 
   log "Set the root password"
   until arch-chroot /mnt passwd </dev/tty; do
     echo "Passwords did not match, try again."
   done
+
+  # Flush before the reboot prompt, so a failing ESP write surfaces here and not at boot.
+  sync
+  umount -R /mnt || log "note: /mnt is still busy; it will unmount on reboot"
 
   log "Done — reboot. The rest runs automatically on tty1 and will ask for the ${USERNAME} home password."
 }
@@ -144,10 +161,10 @@ stage_chroot() {
   locale-gen
   echo "LANG=$LOCALE" > /etc/locale.conf
   printf 'FONT=%s\nKEYMAP=us\n' "$CONSOLE_FONT" > /etc/vconsole.conf
-  echo "$HOSTNAME" > /etc/hostname
+  echo "$TARGET_HOST" > /etc/hostname
 
   sed -i 's/^#Color/Color/;s/^#ParallelDownloads.*/ParallelDownloads = 8/' /etc/pacman.conf
-  enable_multilib /etc/pacman.conf
+  enable_multilib
 
   # A drop-in rather than sed on mkinitcpio.conf: the nvidia modules are loaded early so KMS is
   # up before the display manager, and `kms` is dropped so nouveau never enters the initramfs.
@@ -175,7 +192,10 @@ console-mode max
 editor   yes
 EOF
   local root_uuid variant
+  # blkid exits 0 with empty output on a device it cannot identify, which would silently
+  # write `root=UUID=` and leave an unbootable entry.
   root_uuid=$(blkid -s UUID -o value "$PART_ROOT")
+  [[ -n $root_uuid ]] || die "could not read a UUID from $PART_ROOT"
   for variant in "" "-fallback"; do
     cat > "/boot/loader/entries/arch${variant}.conf" <<EOF
 title   Arch Linux${variant:+ (fallback)}
@@ -213,7 +233,7 @@ EOF
   cat > /etc/systemd/system/arch-firstboot.service <<EOF
 [Unit]
 Description=First boot setup
-ConditionPathExists=/root/setup.sh
+ConditionPathExists=$SCRIPT_PATH
 After=systemd-homed.service network-online.target
 Wants=network-online.target
 Before=plasmalogin.service
@@ -222,7 +242,7 @@ Conflicts=getty@tty1.service
 [Service]
 Type=oneshot
 ExecStartPre=/usr/bin/systemctl disable arch-firstboot.service
-ExecStart=/root/setup.sh firstboot
+ExecStart=$SCRIPT_PATH firstboot
 StandardInput=tty
 StandardOutput=tty
 StandardError=tty
@@ -289,17 +309,15 @@ stage_firstboot() {
   flatpak install -y --noninteractive flathub "${FLATPAKS[@]}"
 
   log "Building AUR packages as $USERNAME"
-  local user_script=/tmp/arch-setup-user.sh
-  install -m 0755 "$SELF" "$user_script"
+  # runuser does not set up a login environment, and makepkg needs a real HOME.
   runuser -u "$USERNAME" -- env HOME="/home/$USERNAME" USER="$USERNAME" LOGNAME="$USERNAME" \
-    "$user_script" user
-  rm -f "$user_script"
+    "$SCRIPT_PATH" user
 
   # asusd is Type=dbus and has no [Install] section, so it is started, never enabled.
   systemctl start asusd
   asusctl battery limit 50
 
-  rm -f /root/setup.sh /etc/systemd/system/arch-firstboot.service
+  rm -f "$SCRIPT_PATH" /etc/systemd/system/arch-firstboot.service
   systemctl daemon-reload
   log "Setup complete."
 }
@@ -329,14 +347,17 @@ stage_user() {
   done
 }
 
-enable_multilib() {
-  sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' "$1"
-}
-
-case "${1:-install}" in
-  install)   stage_install ;;
-  chroot)    stage_chroot ;;
-  firstboot) stage_firstboot ;;
-  user)      stage_user ;;
-  *)         die "unknown stage: $1 (install|chroot|firstboot|user)" ;;
+STAGE=${1:-install}
+case $STAGE in
+  install|chroot|firstboot)
+    [[ $EUID -eq 0 ]] || die "stage '$STAGE' must run as root"
+    ;;
+  user)
+    [[ $EUID -ne 0 ]] || die "stage 'user' must not run as root — firstboot invokes it via runuser"
+    ;;
+  *)
+    die "unknown stage: $STAGE (install|chroot|firstboot|user)"
+    ;;
 esac
+
+"stage_$STAGE"
