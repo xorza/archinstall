@@ -164,13 +164,15 @@ EOF
 
   log "Installing systemd-boot"
   bootctl install
+  # timeout 0 boots straight through; hold Space at power-on to reach the menu. The editor
+  # stays on: without Secure Boot it blocks nothing a USB boot would not, and it is the only
+  # way to fix a bad cmdline from the menu.
   cat > /boot/loader/loader.conf <<'EOF'
 default  arch.conf
 timeout  0
 console-mode max
-editor   no
+editor   yes
 EOF
-  # timeout 0 boots straight through; hold Space at power-on to reach the fallback entry.
   local root_uuid variant
   root_uuid=$(blkid -s UUID -o value "$PART_ROOT")
   for variant in "" "-fallback"; do
@@ -234,6 +236,16 @@ EOF
   systemctl enable \
     NetworkManager bluetooth sshd avahi-daemon systemd-homed systemd-resolved \
     plasmalogin fstrim.timer systemd-oomd ufw arch-firstboot.service
+
+  # Arch's stock preset builds only the default image, which would leave the fallback loader
+  # entry written above pointing at a file that never gets created.
+  cat > /etc/mkinitcpio.d/linux.preset <<'EOF'
+ALL_kver="/boot/vmlinuz-linux"
+PRESETS=('default' 'fallback')
+default_image="/boot/initramfs-linux.img"
+fallback_image="/boot/initramfs-linux-fallback.img"
+fallback_options="-S autodetect"
+EOF
 
   # Both MODULES and HOOKS are settled by now.
   mkinitcpio -P
