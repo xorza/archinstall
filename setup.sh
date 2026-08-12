@@ -16,8 +16,9 @@ USERNAME=xxorza
 TIMEZONE=Europe/Chisinau
 LOCALE=en_US.UTF-8
 SWAP_SIZE=16G
-# The Neo G9 console is unreadable at the default 8x16.
-CONSOLE_FONT=ter-132b
+# ter-u32b is 16x32, the largest console font Terminus ships. On the 7680x2160 G9 that is
+# 480x67 cells; the 8x16 default gives 960x135 and is unreadable.
+CONSOLE_FONT=ter-u32b
 
 # /boot and / live on the PM9A1; /home is a whole-disk ext4 on the 980 PRO and is
 # never formatted. Partitions must already exist — this script does not touch the GPT.
@@ -142,7 +143,7 @@ stage_chroot() {
   sed -i "s/^#\(${LOCALE//./\\.} UTF-8\)/\1/" /etc/locale.gen
   locale-gen
   echo "LANG=$LOCALE" > /etc/locale.conf
-  echo "FONT=$CONSOLE_FONT" > /etc/vconsole.conf
+  printf 'FONT=%s\nKEYMAP=us\n' "$CONSOLE_FONT" > /etc/vconsole.conf
   echo "$HOSTNAME" > /etc/hostname
 
   sed -i 's/^#Color/Color/;s/^#ParallelDownloads.*/ParallelDownloads = 8/' /etc/pacman.conf
