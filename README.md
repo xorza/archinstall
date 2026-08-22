@@ -5,7 +5,7 @@ Opinionated Arch Linux install for KDE Plasma on an ASUS ROG Strix SCAR 18 (G834
 ## What you get
 
 - KDE Plasma (Wayland) with systemd-boot
-- Nvidia (open, via DKMS) with early KMS, Intel iGPU blacklisted for dGPU-only MUX mode
+- Nvidia (open, via DKMS) with early KMS, dGPU-only MUX mode (the iGPU drives no outputs)
 - Encrypted home via systemd-homed (LUKS + btrfs)
 - Swapfile, pipewire, bluetooth, samba, avahi
 - UFW firewall (SSH allowed), WireGuard, common net tools
@@ -66,10 +66,10 @@ prebuilt `nvidia-open` package — that one is pinned to a single kernel build b
 module vermagic, and a `linux` pkgrel bump released ahead of its rebuild is enough
 to leave the dGPU with no driver.
 
-The cost is that a *failed* build looks identical to a missing one: with the iGPU
-blacklisted there is no output to fall back to, so the machine boots to a black
-screen on both external and internal panels. Confirm the build before rebooting
-into a new kernel:
+The cost is that a *failed* build looks identical to a missing one: in dGPU-only
+MUX mode every display connector hangs off the Nvidia GPU, so there is nothing to
+fall back to and the machine boots to a black screen on both the external and the
+internal panel. Confirm the build before rebooting into a new kernel:
 
 ```bash
 dkms status   # nvidia/<ver>, <kernel>, x86_64: installed

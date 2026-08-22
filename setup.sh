@@ -174,11 +174,8 @@ MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
 HOOKS=(base udev autodetect microcode modconf keyboard keymap consolefont block filesystems fsck)
 EOF
 
-  cat > /etc/modprobe.d/blacklist-intel.conf <<'EOF'
-install i915 /usr/bin/false
-install intel_agp /usr/bin/false
-EOF
   echo 'options nvidia NVreg_RegistryDwords=EnableBrightnessControl=1' > /etc/modprobe.d/20-nvidia-backlight.conf
+  echo 'blacklist uvcvideo' > /etc/modprobe.d/disable-cam-mic.conf
 
   log "Installing systemd-boot"
   bootctl install
