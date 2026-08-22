@@ -44,7 +44,7 @@ PACKAGES=(
   base-devel git nano fish
   btrfs-progs dosfstools ntfs-3g exfatprogs
   networkmanager openssh
-  nvidia-open nvidia-utils nvidia-settings libva-nvidia-driver egl-wayland
+  nvidia-open-dkms nvidia-utils nvidia-settings libva-nvidia-driver egl-wayland
   lib32-nvidia-utils lib32-vulkan-icd-loader vulkan-icd-loader libva-utils
   plasma-meta plasma-login-manager plasma-nm
   wayland xorg-xwayland qt5-wayland qt6-wayland
@@ -267,6 +267,11 @@ default_image="/boot/initramfs-linux.img"
 fallback_image="/boot/initramfs-linux-fallback.img"
 fallback_options="-S autodetect"
 EOF
+
+  # A DKMS build that failed back in pacstrap would otherwise only surface as a black screen
+  # after the reboot, with no output left to read the error on.
+  compgen -G '/usr/lib/modules/*/updates/dkms/nvidia.ko*' > /dev/null \
+    || die "DKMS did not build the nvidia modules — 'dkms status' in the chroot will say why"
 
   # Both MODULES and HOOKS are settled by now.
   mkinitcpio -P
