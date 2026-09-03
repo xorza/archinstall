@@ -22,8 +22,9 @@ bash setup.sh
 ```
 
 Reboot when it finishes. The rest runs automatically on tty1 before the display
-manager starts. Three prompts total: confirm the disk wipe, set the root password,
-set the `xxorza` home password.
+manager starts. It asks four times: confirm the disk wipe, set the root password,
+set the `xxorza` home password, then give that password again so `homectl activate`
+can unlock the home for the AUR builds.
 
 ## Disk layout
 

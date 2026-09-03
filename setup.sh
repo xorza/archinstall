@@ -87,7 +87,13 @@ SELF=$(readlink -f "${BASH_SOURCE[0]}")
 # /usr/local/sbin is 0755, so the unprivileged `user` stage can execute it too.
 SCRIPT_PATH=/usr/local/sbin/arch-setup
 
-die() { echo "ERROR: $*" >&2; exit 1; }
+# firstboot writes to tty1, and the display manager paints over that screen the moment the
+# stage fails, so the reason also goes to the journal.
+die() {
+  echo "ERROR: $*" >&2
+  systemd-cat -t arch-setup -p err <<<"ERROR: $*" 2>/dev/null || true
+  exit 1
+}
 log() { echo; echo "==> $*"; }
 
 enable_multilib() { sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' /etc/pacman.conf; }
@@ -178,6 +184,9 @@ EOF
   echo 'blacklist uvcvideo' > /etc/modprobe.d/disable-cam-mic.conf
 
   log "Installing systemd-boot"
+  # This writes the loader onto the ESP. It leaves the EFI boot variables alone, because
+  # bootctl reads the chroot as a system that did not boot with EFI. stage_install adds the
+  # NVRAM entry afterwards.
   bootctl install
   # timeout 0 boots straight through; hold Space at power-on to reach the menu. The editor
   # stays on: without Secure Boot it blocks nothing a USB boot would not, and it is the only
@@ -275,6 +284,9 @@ EOF
 }
 
 stage_firstboot() {
+  # The unit owns tty1 and the display manager takes that screen over, so keep a copy on disk.
+  exec > >(tee -a /var/log/arch-setup.log) 2>&1
+
   # arch-chroot bind-mounts /etc/resolv.conf, so this cannot be done in the chroot stage.
   ln -sf ../run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
