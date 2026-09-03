@@ -52,7 +52,7 @@ PACKAGES=(
   pipewire pipewire-audio pipewire-pulse pipewire-alsa wireplumber
   bluez bluez-utils
   samba smbclient kio-extras avahi
-  power-profiles-daemon fwupd smartmontools ddcutil
+  power-profiles-daemon fwupd smartmontools ddcutil v4l-utils
   flatpak discover
   konsole dolphin ark spectacle partitionmanager kwalletmanager kwallet-pam
   rustup clang llvm mold
@@ -64,7 +64,7 @@ PACKAGES=(
   udisks2 gvfs ufw zed steam kicad
 )
 
-AUR_PACKAGES=(asusctl rog-control-center brave-bin edid-decode)
+AUR_PACKAGES=(asusctl rog-control-center brave-bin)
 
 FLATPAKS=(
   org.telegram.desktop org.blender.Blender com.prusa3d.PrusaSlicer
