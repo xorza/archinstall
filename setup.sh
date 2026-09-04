@@ -147,6 +147,14 @@ stage_install() {
   install -m 0755 "$SELF" "/mnt$SCRIPT_PATH"
   arch-chroot /mnt "$SCRIPT_PATH" chroot
 
+  # bootctl ran inside the chroot and wrote no EFI boot variable, so nothing in NVRAM names
+  # this loader and the firmware falls back to the removable path. The ESP also holds the
+  # Windows Boot Manager, so name the loader here, where the variables work.
+  if ! efibootmgr | grep -q 'Linux Boot Manager'; then
+    efibootmgr --quiet --create --disk "$(readlink -f "$DISK_SYS")" --part 1 \
+      --loader '\EFI\systemd\systemd-bootx64.efi' --label 'Linux Boot Manager'
+  fi
+
   log "Set the root password"
   until arch-chroot /mnt passwd </dev/tty; do
     echo "Passwords did not match, try again."
