@@ -149,10 +149,13 @@ stage_install() {
 
   # bootctl ran inside the chroot and wrote no EFI boot variable, so nothing in NVRAM names
   # this loader and the firmware falls back to the removable path. The ESP also holds the
-  # Windows Boot Manager, so name the loader here, where the variables work.
+  # Windows Boot Manager, so name the loader here, where the variables work. A firmware that
+  # refuses the write still boots \EFI\BOOT\BOOTX64.EFI, which is not worth losing an
+  # otherwise finished install over.
   if ! efibootmgr | grep -q 'Linux Boot Manager'; then
     efibootmgr --quiet --create --disk "$(readlink -f "$DISK_SYS")" --part 1 \
-      --loader '\EFI\systemd\systemd-bootx64.efi' --label 'Linux Boot Manager'
+      --loader '\EFI\systemd\systemd-bootx64.efi' --label 'Linux Boot Manager' \
+      || log "warning: the firmware refused the boot entry; it will use the fallback loader"
   fi
 
   log "Set the root password"
